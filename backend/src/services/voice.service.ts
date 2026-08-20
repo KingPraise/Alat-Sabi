@@ -37,9 +37,11 @@ export class VoiceService {
       return FALLBACK_TRANSACTION;
     }
 
-    // Candidate model list in order of preference
+    // Candidate model list in order of preference (using gemini-2.5-flash / gemini-1.5-flash series)
     const candidateModels = [
-      process.env.GEMINI_MODEL || 'gemini-1.5-flash-latest',
+      process.env.GEMINI_MODEL || 'gemini-2.5-flash',
+      'gemini-2.5-flash-latest',
+      'gemini-1.5-flash-latest',
       'gemini-1.5-flash',
       'gemini-2.0-flash',
       'gemini-1.5-flash-8b',

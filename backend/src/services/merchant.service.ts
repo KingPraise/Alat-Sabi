@@ -23,10 +23,9 @@ export class MerchantService {
     const debtors = await db.getDebtorsByMerchant(merchant.id);
     const loans = await db.getLoansByMerchant(merchant.id);
 
-    // Calculate Today's Sales Summary with robust Date/String coercion
+    // Calculate Today's Sales Summary safely across Date and String objects
     const todayStr = new Date().toISOString().slice(0, 10);
-    const isToday = (dateVal: any) => getISODateString(dateVal).startsWith(todayStr);
-    const todayTxns = txns.filter((t) => isToday(t.created_at));
+    const todayTxns = txns.filter((t) => getISODateString(t.created_at).startsWith(todayStr));
 
     let todayTotalSales = 0;
     let todayCashCollected = 0;
