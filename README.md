@@ -1,6 +1,24 @@
-# ALAT Sabi Engine 🚀
+# ALAT Sabi 🚀
 > **AI-Powered Voice-to-Ledger & MSME Cashflow Underwriting Engine**  
 > *Built for Wema Bank Hackaholics 7.0 Hackathon*
+
+---
+
+## 📁 Monorepo Structure
+
+```
+Alat-Sabi/
+├── backend/                  # Node.js + Express + TypeScript Underwriting API (Render)
+│   ├── src/                  # Controllers, Services, DB connection, Types & Routing
+│   ├── package.json          # Backend dependencies & build/start scripts
+│   ├── tsconfig.json         # TypeScript configuration
+│   ├── .env.example          # Environment template
+│   └── README.md             # Backend API specs & documentation
+├── frontend/                 # Next.js PWA Client Dashboard (Vercel)
+│   └── .gitkeep              # Placeholder for Next.js workspace
+├── README.md                 # Root Monorepo documentation
+└── .gitignore                # Global git ignore configuration
+```
 
 ---
 
@@ -16,169 +34,105 @@ Informal market traders across Nigeria (e.g., Balogun Market fabric sellers, Com
 
 ---
 
-## 🏗 Tech Stack & Architecture
-- **Runtime**: Node.js & TypeScript
-- **Framework**: Express.js with Zod validation
-- **Database**: PostgreSQL (pg pool) / Supabase DDL with automatic **In-Memory Fallback** for instant sandbox execution without DB setup.
-- **Middleware**: CORS, dotenv, global error handler
-
----
-
-## ⚙️ Quick Start
+## ⚡ Backend Quick Start (`backend/`)
 
 ### 1. Installation
 ```bash
-git clone https://github.com/KingPraise/Alat-Sabi.git
-cd Alat-Sabi
+cd backend
 npm install
 ```
 
-### 2. Environment Configuration
-Copy `.env.example` to `.env`:
+### 2. Environment Setup
+Create `backend/.env` from `.env.example`:
 ```env
 PORT=5000
 NODE_ENV=development
 DATABASE_URL=postgres://postgres:postgres@localhost:5432/alatsabi
 ```
-*Note: If `DATABASE_URL` is omitted, the engine runs seamlessly using an in-memory database with pre-seeded Nigerian market merchants.*
+*Note: If `DATABASE_URL` is omitted, the backend engine runs using an in-memory database with pre-seeded Nigerian market merchant data.*
 
 ### 3. Build & Run
 ```bash
-# Build TypeScript
+# Build TypeScript to dist/
 npm run build
 
-# Start production server
+# Start production backend server
 npm start
 
-# Run development mode with hot reload
+# Run dev mode with hot reload
 npm run dev
 ```
 
 ---
 
-## 📑 API Endpoints & Contracts (`/api/v1`)
+## 📑 Core API Endpoints (`/api/v1`)
 
 ### 1. `POST /api/v1/ledger/entry` (AI Voice Webhook Ingestion)
-Ingests parsed voice notes, auto-onboards new merchants with a Wema Virtual Account, records items/debt, and recalculates the credit score.
-
-**Sample Request Body**:
-```json
-{
-  "phone_number": "08031234567",
-  "business_name": "Mama Chukwudi Lace & Fabrics (Balogun Market)",
-  "raw_transcript": "I sell 2 yards of Swiss Voile Lace for 50k cash and 1 Gele for 10k credit to Madam Ngozi",
-  "items": [
-    { "name": "Swiss Voile Lace", "qty": 2, "unit_price": 25000, "total": 50000 },
-    { "name": "Aso-Ebi Gele", "qty": 1, "unit_price": 10000, "total": 10000 }
-  ],
-  "total_amount": 60000,
-  "amount_paid": 50000,
-  "debt_amount": 10000,
-  "debtor_name": "Madam Ngozi",
-  "payment_method": "split"
-}
-```
-
-**cURL Example**:
 ```bash
 curl -X POST http://localhost:5000/api/v1/ledger/entry \
   -H "Content-Type: application/json" \
   -d '{
     "phone_number": "08031234567",
-    "items": [{"name": "Lace Fabric", "qty": 1, "unit_price": 20000, "total": 20000}],
-    "total_amount": 20000,
-    "amount_paid": 20000,
-    "debt_amount": 0,
-    "payment_method": "cash"
+    "business_name": "Mama Chukwudi Lace & Fabrics",
+    "raw_transcript": "I sell 2 yards of Swiss Lace 50k cash and 1 Gele 10k credit to Madam Ngozi",
+    "items": [
+      { "name": "Swiss Voile Lace", "qty": 2, "unit_price": 25000, "total": 50000 },
+      { "name": "Aso-Ebi Gele", "qty": 1, "unit_price": 10000, "total": 10000 }
+    ],
+    "total_amount": 60000,
+    "amount_paid": 50000,
+    "debt_amount": 10000,
+    "debtor_name": "Madam Ngozi",
+    "payment_method": "split"
   }'
 ```
 
----
-
 ### 2. `GET /api/v1/merchant/dashboard/:phone_number`
-Returns aggregated daily sales summary, Wema virtual account info, active debtors, and active loan status.
-
-**cURL Example**:
 ```bash
 curl http://localhost:5000/api/v1/merchant/dashboard/08031234567
 ```
 
----
-
 ### 3. `GET /api/v1/debtors/:phone_number`
-Returns list of active debtors with pre-formatted WhatsApp click-to-chat reminder links (`https://wa.me/...`).
-
-**cURL Example**:
 ```bash
 curl http://localhost:5000/api/v1/debtors/08031234567
 ```
 
----
-
 ### 4. `POST /api/v1/debtors/settle`
-Deducts paid balance from debtor record or marks status as `settled`.
-
-**Sample Request Body**:
-```json
-{
-  "debtor_id": "d1010000-1111-4111-a111-111111111111",
-  "amount_paid": 5000
-}
+```bash
+curl -X POST http://localhost:5000/api/v1/debtors/settle \
+  -H "Content-Type: application/json" \
+  -d '{ "debtor_id": "d1010000-1111-4111-a111-111111111111", "amount_paid": 5000 }'
 ```
-
----
 
 ### 5. `POST /api/v1/loans/apply`
-Allows merchants to draw down working capital against their approved credit limit.
-
-**Sample Request Body**:
-```json
-{
-  "phone_number": "08031234567",
-  "requested_amount": 50000
-}
+```bash
+curl -X POST http://localhost:5000/api/v1/loans/apply \
+  -H "Content-Type: application/json" \
+  -d '{ "phone_number": "08031234567", "requested_amount": 50000 }'
 ```
 
----
-
 ### 6. `GET /api/v1/wema/admin/underwrite`
-Leaderboard dashboard for Wema Bank credit underwriters ranking merchants by credit score, turnover velocity, and default risk.
-
-**cURL Example**:
 ```bash
 curl http://localhost:5000/api/v1/wema/admin/underwrite
 ```
 
 ---
 
-## 🧮 Wema Credit Scoring Engine Formula
-Implemented in `src/services/scoring.service.ts`:
-1. **Average Daily Volume (ADV)**:
-   $$\text{ADV} = \frac{\text{Total Settled Sales}}{\max(1, \text{Active Days})}$$
-2. **Liquidity Ratio (LR)**:
-   $$\text{LR} = \frac{\text{Cash Payments} + \text{Transfer Settlements}}{\text{Total Sales}}$$
-3. **Approved Loan Limit**:
-   $$\text{Approved Loan Limit} = (\text{ADV} \times 7) \times \text{LR} - \text{Active Loan Balance}$$
-4. **Credit Score Mapping (300 to 850)**:
-   - **Turnover Volume**: Up to +200 points
-   - **Transaction Consistency & Frequency**: Up to +150 points
-   - **Liquidity & Cash Settlement Ratio**: Up to +120 points
-   - **Debt Collection Rate**: Up to +80 points
-   - **Default Penalty**: -150 points per defaulted loan
+## ☁️ Independent Deployment Instructions
 
----
-
-## ☁️ Deployment Instructions
-
-### Deploy to Render
-1. Connect your GitHub repository to Render.
-2. Select **Web Service**.
+### 🚀 Backend Deployment on Render
+1. Create a new **Web Service** on Render and connect repository `KingPraise/Alat-Sabi`.
+2. Set **Root Directory** to `backend`.
 3. Build Command: `npm install && npm run build`
-4. Start Command: `npm start`
-5. Add Environment Variable: `DATABASE_URL` (optional, pointing to Supabase PostgreSQL).
+4. Start Command: `npm start` (runs `node dist/server.js`)
+5. Add Environment Variables:
+   - `PORT`: `5000`
+   - `DATABASE_URL`: Your Supabase / PostgreSQL URI (Optional)
 
-### Deploy to Vercel
-1. Install Vercel CLI or import repository in Vercel Dashboard.
-2. Set Build Command: `npm run build`
-3. Output Directory: `dist`
-4. Deploy using Node.js runtime.
+### 🎨 Frontend Deployment on Vercel
+1. Import repository `KingPraise/Alat-Sabi` into Vercel.
+2. Set **Root Directory** to `frontend`.
+3. Framework Preset: **Next.js**.
+4. Build & Output settings: Default (`npm run build`).
+5. Add Environment Variable:
+   - `NEXT_PUBLIC_API_BASE_URL`: `https://your-render-backend-url.onrender.com/api/v1`
