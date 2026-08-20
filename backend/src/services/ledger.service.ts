@@ -1,7 +1,7 @@
 import { db } from '../db/connection';
 import { LedgerEntryInput } from '../validation/schemas';
 import { ScoringService } from './scoring.service';
-import { Merchant, Transaction, Debtor, Loan } from '../types';
+import { Merchant, Transaction, Debtor, Loan, Item } from '../types';
 
 export class LedgerService {
   /**
@@ -20,7 +20,7 @@ export class LedgerService {
     // 2. Record Transaction
     const transaction = await db.addTransaction({
       merchant_id: merchant.id,
-      items: input.items,
+      items: input.items as Item[],
       total_amount: input.total_amount,
       amount_paid: input.amount_paid,
       debt_amount: input.debt_amount,
