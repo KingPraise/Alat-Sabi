@@ -6,6 +6,29 @@ export async function fetchMerchantDashboard(phone: string) {
   return res.json();
 }
 
+export async function postLedgerEntry(payload: {
+  phone_number: string;
+  business_name?: string;
+  raw_transcript: string;
+  items: Array<{ name: string; qty: number; unit_price: number; total: number }>;
+  total_amount: number;
+  amount_paid: number;
+  debt_amount: number;
+  debtor_name?: string;
+  payment_method: 'cash' | 'transfer' | 'credit' | 'split';
+}) {
+  const res = await fetch(`${API_BASE_URL}/ledger/entry`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Ledger entry failed');
+  }
+  return res.json();
+}
+
 export async function uploadVoiceAudio(phone: string, businessName: string, audioBlob: Blob) {
   const formData = new FormData();
   formData.append('phone_number', phone);
