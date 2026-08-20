@@ -4,13 +4,13 @@ async function testBackendEngine() {
   console.log('🧪 Starting ALAT Sabi Backend API Integration Test Suite...\n');
   const app = await bootstrapApp();
 
-  const server = app.listen(5099, async () => {
+  const server = app.listen(5098, async () => {
     try {
-      const baseUrl = 'http://localhost:5099/api/v1';
+      const baseUrl = 'http://localhost:5098/api/v1';
 
       // 1. Test Health Check
       console.log('1️⃣ Testing GET /health ...');
-      const healthRes = await fetch('http://localhost:5099/health');
+      const healthRes = await fetch('http://localhost:5098/health');
       const healthData = await healthRes.json();
       console.log('   Response:', JSON.stringify(healthData));
 
