@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { MerchantProvider } from "@/context/MerchantContext";
+import { WhatsAppChatSimulator } from "@/components/WhatsAppChatSimulator";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -33,6 +34,7 @@ export default function RootLayout({
       <body className={`${inter.className} bg-slate-950 text-slate-100 antialiased`}>
         <MerchantProvider>
           {children}
+          <WhatsAppChatSimulator />
         </MerchantProvider>
       </body>
     </html>
