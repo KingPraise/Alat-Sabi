@@ -21,6 +21,11 @@ export function VoiceRecorderWidget({ phoneNumber, businessName, onSuccess }: Vo
     setErrorMessage(null);
     audioChunksRef.current = [];
 
+    if (typeof window === 'undefined' || !navigator?.mediaDevices?.getUserMedia) {
+      setErrorMessage('Audio recording is not supported in this environment');
+      return;
+    }
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mediaRecorder = new MediaRecorder(stream);
