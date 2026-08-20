@@ -2,6 +2,12 @@ import { db } from '../db/connection';
 import { ScoringService } from './scoring.service';
 import { LoanApplyInput, DebtorSettleInput } from '../validation/schemas';
 
+const getISODateString = (val: any): string => {
+  if (!val) return new Date().toISOString();
+  if (val instanceof Date) return val.toISOString();
+  return String(val);
+};
+
 export class MerchantService {
   /**
    * GET Dashboard aggregated metrics for a merchant
@@ -17,9 +23,10 @@ export class MerchantService {
     const debtors = await db.getDebtorsByMerchant(merchant.id);
     const loans = await db.getLoansByMerchant(merchant.id);
 
-    // Calculate Today's Sales Summary
-    const today = new Date().toISOString().split('T')[0];
-    const todayTxns = txns.filter((t) => t.created_at.startsWith(today));
+    // Calculate Today's Sales Summary with robust Date/String coercion
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const isToday = (dateVal: any) => getISODateString(dateVal).startsWith(todayStr);
+    const todayTxns = txns.filter((t) => isToday(t.created_at));
 
     let todayTotalSales = 0;
     let todayCashCollected = 0;
