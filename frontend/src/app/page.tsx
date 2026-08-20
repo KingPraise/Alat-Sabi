@@ -290,7 +290,7 @@ export default function MerchantDashboardPage() {
 
                       {txn.raw_transcript && (
                         <p className="text-xs italic text-slate-600 bg-slate-50 p-2 rounded-xl border border-slate-100">
-                          "{txn.raw_transcript}"
+                          &quot;{txn.raw_transcript}&quot;
                         </p>
                       )}
 

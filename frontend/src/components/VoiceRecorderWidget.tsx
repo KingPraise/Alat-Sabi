@@ -73,9 +73,9 @@ export function VoiceRecorderWidget({ phoneNumber, businessName, onSuccess }: Vo
           <span>Multimodal AI Voice Ledger</span>
         </div>
 
-        <h2 className="text-lg font-bold">Record Today's Sales</h2>
+        <h2 className="text-lg font-bold">Record Today&apos;s Sales</h2>
         <p className="text-xs text-purple-200 max-w-xs leading-relaxed">
-          Tap mic and speak in Pidgin, English, or Yoruba (e.g. "I sell 2 Ankara 30k cash and 1 Lace 15k credit to Mama Blessing")
+          Tap mic and speak in Pidgin, English, or Yoruba (e.g. &quot;I sell 2 Ankara 30k cash and 1 Lace 15k credit to Mama Blessing&quot;)
         </p>
 
         <div className="relative my-2">
